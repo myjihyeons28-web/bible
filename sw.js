@@ -1,4 +1,4 @@
-const CACHE = 'bible-v4';
+const CACHE = 'bible-v5';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js',
   './bible-data.js', './manna-ot.js', './manna-nt.js',

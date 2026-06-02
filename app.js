@@ -21,7 +21,17 @@
   }
 
   // 표지 탭 → 권 목록
-  document.getElementById('cover-tap').addEventListener('click', ()=>show('books'));
+  // 표지 탭 → 마지막 읽은 지점이 있으면 그곳, 없으면 권 목록
+  document.getElementById('cover-tap').addEventListener('click', ()=>{
+    let lp = null;
+    try { lp = JSON.parse(localStorage.getItem('bible-last')||'null'); } catch(e){}
+    if(lp && books[lp.book] && books[lp.book].chapters[lp.ch]){
+      curBookIdx = lp.book;
+      openChapter(lp.ch);
+    } else {
+      show('books');
+    }
+  });
   document.getElementById('back-to-cover').addEventListener('click', ()=>show('cover'));
 
   // ── 1. 권 목록 렌더 ──
@@ -98,6 +108,9 @@
     document.getElementById('next-chapter').disabled = (chIdx === b.chapters.length-1);
     document.getElementById('reader-scroll').scrollTop = 0;
     show('reader');
+    // 마지막 읽은 지점 저장
+    try { localStorage.setItem('bible-last', JSON.stringify({book:curBookIdx, ch:chIdx})); } catch(e){}
+    updateBookmarkBtn();
   }
 
   // 주석 펼치기/접기
@@ -368,6 +381,85 @@
   }
   function escapeReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
   function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // ── 책갈피 ──
+  function getBookmarks(){
+    try { return JSON.parse(localStorage.getItem('bible-bookmarks')||'[]'); } catch(e){ return []; }
+  }
+  function saveBookmarks(arr){
+    try { localStorage.setItem('bible-bookmarks', JSON.stringify(arr)); } catch(e){}
+  }
+  function isBookmarked(book, ch){
+    return getBookmarks().some(m=>m.book===book && m.ch===ch);
+  }
+  function updateBookmarkBtn(){
+    const btn = document.getElementById('bookmark-btn');
+    if(!btn) return;
+    const marked = isBookmarked(curBookIdx, curChapterIdx);
+    btn.textContent = marked ? '★' : '☆';
+    btn.classList.toggle('marked', marked);
+  }
+  // 책갈피 추가/제거 토글
+  document.getElementById('bookmark-btn').addEventListener('click', ()=>{
+    let arr = getBookmarks();
+    if(isBookmarked(curBookIdx, curChapterIdx)){
+      arr = arr.filter(m=>!(m.book===curBookIdx && m.ch===curChapterIdx));
+    } else {
+      arr.unshift({book:curBookIdx, ch:curChapterIdx});
+    }
+    saveBookmarks(arr);
+    updateBookmarkBtn();
+  });
+
+  // 책갈피 목록 열기/닫기
+  const bmOverlay = document.getElementById('bookmark-overlay');
+  document.getElementById('bookmark-list-btn').addEventListener('click', openBookmarkList);
+  document.getElementById('bookmark-close').addEventListener('click', ()=>bmOverlay.classList.remove('show'));
+  bmOverlay.addEventListener('click', (e)=>{ if(e.target===bmOverlay) bmOverlay.classList.remove('show'); });
+
+  function openBookmarkList(){
+    const arr = getBookmarks();
+    const list = document.getElementById('bookmark-list');
+    if(arr.length===0){
+      list.innerHTML = '<div class="bookmark-empty">저장된 책갈피가 없습니다.<br>본문 화면 오른쪽 위 ☆ 를 눌러 추가하세요.</div>';
+    } else {
+      list.innerHTML = arr.map((m,i)=>{
+        const b = books[m.book];
+        if(!b) return '';
+        const c = b.chapters[m.ch];
+        const snippet = stripTags(c.html).slice(0,30);
+        return `<div class="bookmark-item" data-i="${i}">
+          <div class="bookmark-item-info">
+            <div class="bookmark-item-ref">${b.name} ${c.num}장</div>
+            <div class="bookmark-item-snippet">${snippet}…</div>
+          </div>
+          <button class="bookmark-del" data-del="${i}" aria-label="삭제">🗑</button>
+        </div>`;
+      }).join('');
+      // 이동
+      list.querySelectorAll('.bookmark-item').forEach(item=>{
+        item.addEventListener('click', (e)=>{
+          if(e.target.classList.contains('bookmark-del')) return;
+          const m = arr[parseInt(item.dataset.i)];
+          curBookIdx = m.book;
+          bmOverlay.classList.remove('show');
+          openChapter(m.ch);
+        });
+      });
+      // 삭제
+      list.querySelectorAll('.bookmark-del').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          let a = getBookmarks();
+          a.splice(parseInt(btn.dataset.del),1);
+          saveBookmarks(a);
+          openBookmarkList(); // 다시 그리기
+          updateBookmarkBtn();
+        });
+      });
+    }
+    bmOverlay.classList.add('show');
+  }
 
   // ── 초기화 ──
   renderBooks();

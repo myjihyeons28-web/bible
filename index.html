@@ -30,7 +30,7 @@
   <header class="nav-header">
     <button class="back-btn" id="back-to-cover">‹ 처음</button>
     <h2 class="nav-title">聖經全書</h2>
-    <span class="nav-spacer"></span>
+    <button class="bookmark-list-btn" id="bookmark-list-btn" aria-label="책갈피 목록">🔖</button>
   </header>
 
   <div class="search-bar">
@@ -61,6 +61,7 @@
   <header class="nav-header">
     <button class="back-btn" id="back-to-chapters">‹ 장</button>
     <h2 class="nav-title" id="reader-title">창세기 1장</h2>
+    <button class="bookmark-btn" id="bookmark-btn" aria-label="책갈피">☆</button>
     <button class="settings-btn" id="settings-btn" aria-label="설정">⚙</button>
   </header>
   <div class="reader-search-bar">
@@ -104,6 +105,17 @@
 
 <!-- 맨 위로 버튼 -->
 <button id="top-btn" class="top-btn" aria-label="맨 위로">↑</button>
+
+<!-- 책갈피 목록 오버레이 -->
+<div id="bookmark-overlay" class="bookmark-overlay">
+  <div class="bookmark-sheet">
+    <div class="bookmark-sheet-header">
+      <span>책갈피</span>
+      <button id="bookmark-close" class="bookmark-close">✕</button>
+    </div>
+    <div id="bookmark-list" class="bookmark-list"></div>
+  </div>
+</div>
 
 <script src="./bible-data.js"></script>
 <script src="./manna-ot.js"></script>

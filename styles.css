@@ -372,3 +372,60 @@ body.reading .top-btn { display:block; }
 #reader-scroll.theme-beige .anno-label,
 #reader-scroll.theme-sky .anno-label,
 #reader-scroll.theme-gray .anno-label { color:#8a6f1c; }
+
+/* ── 책갈피 버튼 (본문 헤더) ── */
+.bookmark-btn {
+  background:none; border:none; color:#c9a876; font-size:22px;
+  cursor:pointer; padding:4px 6px; font-family:inherit; min-width:38px;
+}
+.bookmark-btn.marked { color:#e8c04a; }
+/* 설정 버튼이 책갈피 옆에 오므로 너비 조정 */
+.nav-header .settings-btn { min-width:40px; }
+
+/* ── 책갈피 목록 버튼 (권 목록 헤더) ── */
+.bookmark-list-btn {
+  background:none; border:none; font-size:20px;
+  cursor:pointer; min-width:64px; text-align:right; padding:4px 6px;
+  font-family:inherit;
+}
+
+/* ── 책갈피 오버레이 ── */
+.bookmark-overlay {
+  position:fixed; inset:0; z-index:80; display:none;
+  background:rgba(0,0,0,0.55);
+  align-items:flex-end; justify-content:center;
+}
+.bookmark-overlay.show { display:flex; }
+.bookmark-sheet {
+  width:100%; max-width:560px; max-height:72vh;
+  background:#1f1812; border-top-left-radius:18px; border-top-right-radius:18px;
+  border:1px solid #3a2e22; border-bottom:none;
+  display:flex; flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom);
+  animation:sheet-up 0.22s ease;
+}
+@keyframes sheet-up { from { transform:translateY(40px); opacity:0.6; } to { transform:translateY(0); opacity:1; } }
+.bookmark-sheet-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border-bottom:1px solid #2e251c;
+  font-size:17px; font-weight:700; color:#f0e6d6; letter-spacing:2px;
+  flex-shrink:0;
+}
+.bookmark-close {
+  background:none; border:none; color:#9c8a76; font-size:17px; cursor:pointer; padding:6px;
+}
+.bookmark-list { overflow-y:auto; padding:8px 0; }
+.bookmark-item {
+  display:flex; align-items:center; gap:12px;
+  padding:15px 20px; border-bottom:1px solid #221a13; cursor:pointer;
+}
+.bookmark-item:active { background:#241c14; }
+.bookmark-item-info { flex:1; min-width:0; }
+.bookmark-item-ref { font-size:16px; color:#ece2d3; }
+.bookmark-item-snippet { font-size:12px; color:#8a7864; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bookmark-del {
+  background:none; border:none; color:#7d5f4f; font-size:18px; cursor:pointer;
+  padding:6px 8px; flex-shrink:0;
+}
+.bookmark-del:active { color:#c97a5a; }
+.bookmark-empty { text-align:center; color:#7d6c59; padding:40px 20px; font-size:15px; }
