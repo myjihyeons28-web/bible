@@ -13,14 +13,24 @@
 </head>
 <body>
 
-<!-- 화면 1: 권 목록 (홈) -->
-<div id="screen-books" class="screen active">
-  <header class="app-header">
-    <div class="cover-wrap">
-      <img src="./cover.jpeg" alt="관주 성경전서" class="cover-img">
+<!-- 화면 0: 표지 (홈) -->
+<div id="screen-cover" class="screen active">
+  <div id="cover-tap" class="cover-screen">
+    <div class="cover-big-wrap">
+      <img src="./cover.jpeg" alt="관주 성경전서" class="cover-big">
     </div>
     <h1 class="app-title">貫珠 聖經全書</h1>
     <p class="app-subtitle">간이 국한문 · 대한성서공회</p>
+    <p class="cover-hint">화면을 누르면 시작합니다</p>
+  </div>
+</div>
+
+<!-- 화면 1: 권 목록 -->
+<div id="screen-books" class="screen">
+  <header class="nav-header">
+    <button class="back-btn" id="back-to-cover">‹ 처음</button>
+    <h2 class="nav-title">聖經全書</h2>
+    <span class="nav-spacer"></span>
   </header>
 
   <div class="search-bar">
@@ -73,6 +83,12 @@
 </div>
 
 <script src="./bible-data.js"></script>
+<script src="./manna-ot.js"></script>
+<script src="./manna-nt.js"></script>
+<script>
+  // 구약/신약 주석을 하나로 합침
+  var MANNA_DATA = Object.assign({}, window.MANNA_OT || {}, window.MANNA_NT || {});
+</script>
 <script src="./app.js"></script>
 </body>
 </html>

@@ -31,7 +31,34 @@ body { background:#15110d; color:#e8ddd0; }
 }
 .screen.active { display:flex; }
 
-/* ── 홈 헤더 (표지) ── */
+/* ── 표지 전용 메인 화면 ── */
+.cover-screen {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:30px 24px; cursor:pointer;
+  text-align:center;
+}
+.cover-big-wrap {
+  display:flex; justify-content:center; align-items:center;
+  height:50vh; margin-bottom:28px;
+}
+.cover-big {
+  height:50vh; width:auto; max-width:84vw; object-fit:contain;
+  border-radius:8px;
+  box-shadow:0 10px 36px rgba(0,0,0,0.6);
+  border:1px solid #3a2e22;
+}
+.cover-screen .app-title {
+  font-size:30px; font-weight:700; color:#f0e6d6; letter-spacing:4px;
+}
+.cover-screen .app-subtitle {
+  font-size:15px; color:#9c8a76; margin-top:8px; letter-spacing:1px;
+}
+.cover-hint {
+  font-size:13px; color:#6f5f4c; margin-top:34px; letter-spacing:1px;
+}
+
+/* ── 홈 헤더 (표지) ── 기존(권목록에서 더 안 씀) */
 .app-header {
   text-align:center; padding:28px 20px 16px;
   background:linear-gradient(180deg,#1f1812 0%,#15110d 100%);
@@ -166,6 +193,47 @@ body { background:#15110d; color:#e8ddd0; }
 /* 한자음 숨김 토글 */
 .reader-content.hide-ruby rt { display:none; }
 
+/* ── 주석 (만나주석) ── */
+/* 주석 있는 절 번호: 탭 가능 표시 */
+.reader-content .verse-num.has-anno {
+  cursor:pointer;
+  border-bottom:1px dotted #b89150;
+}
+.reader-content .verse-num.has-anno:active { color:#e8c578; }
+.reader-content .verse-num.anno-open {
+  color:#e8c578; border-bottom-color:#e8c578;
+}
+/* 주석 박스 */
+.reader-content .anno-box {
+  display:block;
+  margin:10px 0 14px;
+  padding:14px 16px;
+  background:#1b150f;
+  border-left:3px solid #8a6d3b;
+  border-radius:0 8px 8px 0;
+  font-size:0.82em;
+  line-height:1.75;
+  color:#c4b6a2;
+  text-indent:0;
+}
+.reader-content .anno-box .anno-label {
+  display:block;
+  font-size:0.85em;
+  color:#b89150;
+  font-weight:700;
+  margin-bottom:8px;
+  letter-spacing:1px;
+}
+/* 주석 내 강조: <i>=파란 표제어, <u>=보라 서론제목 */
+.reader-content .anno-box i {
+  font-style:normal; color:#88a8d8; font-weight:700;
+}
+.reader-content .anno-box u {
+  text-decoration:none; color:#c79cd0; font-weight:700; font-size:1.05em;
+}
+.reader-content .anno-box b { color:#d4c4af; }
+/* 주석 내 한자음(rt)은 토글과 무관하게 항상 표시 (주석엔 루비 거의 없음) */
+
 /* 본문 내 장 이동 */
 .reader-nav {
   display:flex; justify-content:space-between; gap:12px;
@@ -190,15 +258,16 @@ body { background:#15110d; color:#e8ddd0; }
 .sr-text mark { background:#5a4420; color:#f5e4c0; padding:0 2px; border-radius:2px; }
 .search-empty { text-align:center; color:#7d6c59; padding:40px 20px; font-size:15px; }
 
-/* ── 글자 크기 버튼 ── */
+/* ── 글자 크기 버튼 (본문 화면에서만 표시) ── */
 .font-btn {
   position:fixed; right:18px; bottom:24px; z-index:50;
   width:52px; height:52px; border-radius:50%;
   background:#2a2017; border:1px solid #4a3a2a; color:#d4b483;
   font-size:21px; font-weight:700; cursor:pointer;
   box-shadow:0 4px 16px rgba(0,0,0,0.5);
-  font-family:inherit;
+  font-family:inherit; display:none;
 }
+body.reading .font-btn { display:block; }
 .font-panel {
   position:fixed; right:18px; bottom:84px; z-index:50;
   background:#241c14; border:1px solid #4a3a2a; border-radius:14px;

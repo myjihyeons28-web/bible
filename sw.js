@@ -1,6 +1,7 @@
-const CACHE = 'bible-v1';
+const CACHE = 'bible-v3';
 const ASSETS = [
-  './', './index.html', './styles.css', './app.js', './bible-data.js',
+  './', './index.html', './styles.css', './app.js',
+  './bible-data.js', './manna-ot.js', './manna-nt.js',
   './manifest.json', './cover.jpeg',
   './icon-192.png', './icon-512.png', './icon-512-maskable.png',
   './fonts/gyeonggi-regular.woff', './fonts/gyeonggi-bold.woff'

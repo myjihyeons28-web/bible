@@ -8,6 +8,7 @@
 
   // ── 요소 ──
   const screens = {
+    cover: document.getElementById('screen-cover'),
     books: document.getElementById('screen-books'),
     chapters: document.getElementById('screen-chapters'),
     reader: document.getElementById('screen-reader')
@@ -15,7 +16,13 @@
   function show(name){
     Object.values(screens).forEach(s=>s.classList.remove('active'));
     screens[name].classList.add('active');
+    // 본문 화면에서만 글자크기 버튼 표시
+    document.body.classList.toggle('reading', name==='reader');
   }
+
+  // 표지 탭 → 권 목록
+  document.getElementById('cover-tap').addEventListener('click', ()=>show('books'));
+  document.getElementById('back-to-cover').addEventListener('click', ()=>show('cover'));
 
   // ── 1. 권 목록 렌더 ──
   function renderBooks(){
@@ -70,11 +77,64 @@
     content.innerHTML = c.html;
     applyFontSize();
     applyRuby();
+    // 주석 연결: 이 장의 주석 데이터
+    const bookAnno = MANNA_DATA[String(b.booknum)] || {};
+    const chAnno = bookAnno[String(c.num)] || {};
+    // has-anno 절 번호에 탭 이벤트
+    content.querySelectorAll('.verse-num.has-anno').forEach(span=>{
+      span.addEventListener('click', ()=>toggleAnno(span, chAnno));
+    });
     // 이전/다음 버튼
     document.getElementById('prev-chapter').disabled = (chIdx === 0);
     document.getElementById('next-chapter').disabled = (chIdx === b.chapters.length-1);
     document.getElementById('reader-scroll').scrollTop = 0;
     show('reader');
+  }
+
+  // 주석 펼치기/접기
+  function toggleAnno(span, chAnno){
+    const v = span.dataset.v;
+    // 이미 펼쳐진 주석이 바로 다음에 있으면 접기
+    const next = span.nextElementSibling;
+    if(span.classList.contains('anno-open')){
+      span.classList.remove('anno-open');
+      // 이 절에 속한 주석 박스 제거
+      removeAnnoAfter(span);
+      return;
+    }
+    const text = chAnno[v];
+    if(!text) return;
+    span.classList.add('anno-open');
+    const box = document.createElement('span');
+    box.className = 'anno-box';
+    box.dataset.forV = v;
+    box.innerHTML = `<span class="anno-label">주석 ${v}절</span>${text}`;
+    // 절 텍스트가 이어지는 흐름 안에서, 이 절의 끝(다음 verse-num 직전)에 삽입
+    insertAnnoBox(span, box);
+  }
+  function insertAnnoBox(span, box){
+    // span 다음에 오는 노드들 중, 다음 verse-num을 만나기 전까지가 이 절의 본문.
+    // 그 다음 verse-num 직전(또는 컨테이너 끝)에 box를 넣는다.
+    let node = span.nextSibling;
+    let lastNode = span;
+    while(node){
+      if(node.nodeType===1 && node.classList && node.classList.contains('verse-num')){
+        break;
+      }
+      lastNode = node;
+      node = node.nextSibling;
+    }
+    if(node){
+      node.parentNode.insertBefore(box, node);
+    } else {
+      lastNode.parentNode.appendChild(box);
+    }
+  }
+  function removeAnnoAfter(span){
+    const v = span.dataset.v;
+    const content = document.getElementById('reader-content');
+    const box = content.querySelector(`.anno-box[data-for-v="${v}"]`);
+    if(box) box.remove();
   }
 
   // ── 네비게이션 버튼 ──
