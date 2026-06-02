@@ -166,47 +166,6 @@ body { background:#15110d; color:#e8ddd0; }
 /* 한자음 숨김 토글 */
 .reader-content.hide-ruby rt { display:none; }
 
-/* ── 주석 (만나주석) ── */
-/* 주석 있는 절 번호: 탭 가능 표시 */
-.reader-content .verse-num.has-anno {
-  cursor:pointer;
-  border-bottom:1px dotted #b89150;
-}
-.reader-content .verse-num.has-anno:active { color:#e8c578; }
-.reader-content .verse-num.anno-open {
-  color:#e8c578; border-bottom-color:#e8c578;
-}
-/* 주석 박스 */
-.reader-content .anno-box {
-  display:block;
-  margin:10px 0 14px;
-  padding:14px 16px;
-  background:#1b150f;
-  border-left:3px solid #8a6d3b;
-  border-radius:0 8px 8px 0;
-  font-size:0.82em;
-  line-height:1.75;
-  color:#c4b6a2;
-  text-indent:0;
-}
-.reader-content .anno-box .anno-label {
-  display:block;
-  font-size:0.85em;
-  color:#b89150;
-  font-weight:700;
-  margin-bottom:8px;
-  letter-spacing:1px;
-}
-/* 주석 내 강조: <i>=파란 표제어, <u>=보라 서론제목 */
-.reader-content .anno-box i {
-  font-style:normal; color:#88a8d8; font-weight:700;
-}
-.reader-content .anno-box u {
-  text-decoration:none; color:#c79cd0; font-weight:700; font-size:1.05em;
-}
-.reader-content .anno-box b { color:#d4c4af; }
-/* 주석 내 한자음(rt)은 토글과 무관하게 항상 표시 (주석엔 루비 거의 없음) */
-
 /* 본문 내 장 이동 */
 .reader-nav {
   display:flex; justify-content:space-between; gap:12px;
