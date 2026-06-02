@@ -187,7 +187,7 @@ body { background:#15110d; color:#e8ddd0; }
 /* 루비 (한자 + 한자음) */
 .reader-content ruby { ruby-position:over; }
 .reader-content rt {
-  font-size:0.5em; color:#b49ec8; font-weight:400;
+  font-size:0.5em; color:#1a2a6c; font-weight:400;
   letter-spacing:0;
 }
 /* 한자음 숨김 토글 */
@@ -258,35 +258,62 @@ body { background:#15110d; color:#e8ddd0; }
 .sr-text mark { background:#5a4420; color:#f5e4c0; padding:0 2px; border-radius:2px; }
 .search-empty { text-align:center; color:#7d6c59; padding:40px 20px; font-size:15px; }
 
-/* ── 글자 크기 버튼 (본문 화면에서만 표시) ── */
-.font-btn {
+/* ── 설정 버튼 (상단 오른쪽) ── */
+.settings-btn {
+  background:none; border:none; color:#c9a876; font-size:22px;
+  cursor:pointer; min-width:64px; text-align:right; padding:4px 6px;
+  font-family:inherit;
+}
+/* ── 설정 패널 (상단 오른쪽에서 펼쳐짐) ── */
+.settings-panel {
+  position:fixed; top:54px; right:12px; z-index:60;
+  background:#241c14; border:1px solid #4a3a2a; border-radius:14px;
+  padding:14px; display:none; flex-direction:column; gap:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6); min-width:248px;
+  padding-top:max(14px,calc(env(safe-area-inset-top) + 4px));
+}
+.settings-panel.show { display:flex; }
+.settings-section { display:flex; flex-direction:column; gap:8px; }
+.settings-label { font-size:13px; color:#9c8a76; letter-spacing:1px; }
+.settings-row { display:flex; gap:6px; flex-wrap:wrap; }
+.settings-row button {
+  flex:1; min-width:52px; background:#2a2017; border:1px solid #3f3122;
+  color:#d4c4af; font-size:14px; padding:9px 8px; cursor:pointer;
+  border-radius:8px; font-family:inherit; white-space:nowrap;
+}
+.settings-row button:active, .settings-row button.active {
+  background:#c9a876; color:#1a1410; border-color:#c9a876; font-weight:700;
+}
+.ruby-toggle {
+  display:flex; align-items:center; gap:9px;
+  color:#d4c4af; font-size:14px; cursor:pointer;
+}
+.ruby-toggle input { width:17px; height:17px; accent-color:#c9a876; }
+
+/* ── 맨 위로 버튼 (본문에서만) ── */
+.top-btn {
   position:fixed; right:18px; bottom:24px; z-index:50;
-  width:52px; height:52px; border-radius:50%;
+  width:50px; height:50px; border-radius:50%;
   background:#2a2017; border:1px solid #4a3a2a; color:#d4b483;
-  font-size:21px; font-weight:700; cursor:pointer;
+  font-size:22px; cursor:pointer;
   box-shadow:0 4px 16px rgba(0,0,0,0.5);
   font-family:inherit; display:none;
 }
-body.reading .font-btn { display:block; }
-.font-panel {
-  position:fixed; right:18px; bottom:84px; z-index:50;
-  background:#241c14; border:1px solid #4a3a2a; border-radius:14px;
-  padding:8px; display:none; flex-direction:column; gap:4px;
-  box-shadow:0 6px 24px rgba(0,0,0,0.6);
+body.reading .top-btn { display:block; }
+
+/* ── 본문 검색바 ── */
+.reader-search-bar {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 16px; border-bottom:1px solid #2e251c;
+  flex-shrink:0; position:relative; background:#15110d;
 }
-.font-panel.show { display:flex; }
-.font-panel button {
-  background:none; border:none; color:#d4c4af; font-size:15px;
-  padding:11px 22px; cursor:pointer; border-radius:8px; font-family:inherit;
-  white-space:nowrap; text-align:center;
+.reader-search-bar input {
+  flex:1; background:#241c14; border:1px solid #3a2e22; border-radius:10px;
+  padding:9px 13px; color:#e8ddd0; font-size:14px;
+  font-family:inherit; outline:none;
 }
-.font-panel button:active, .font-panel button.active { background:#3a2e22; color:#f5ecdd; }
-.ruby-toggle {
-  display:flex; align-items:center; gap:8px; justify-content:center;
-  color:#d4c4af; font-size:14px; padding:11px 18px; cursor:pointer;
-  border-top:1px solid #3a2e22; margin-top:4px;
-}
-.ruby-toggle input { width:16px; height:16px; accent-color:#c9a876; }
+.reader-search-bar input::placeholder { color:#7d6c59; }
+.reader-search-bar .search-clear { right:26px; }
 
 /* 글자 크기 단계 */
 .reader-content.size-small { font-size:15px; line-height:1.9; }
@@ -296,3 +323,52 @@ body.reading .font-btn { display:block; }
 
 /* 스크롤바 */
 .list-scroll::-webkit-scrollbar, .reader-scroll::-webkit-scrollbar { width:0; }
+
+/* ─────────────────────────────────────────────
+   본문 배경 테마 (검정 / 베이지 / 하늘색 / 회색)
+   밝은 테마는 기본 글자색 검정, 절번호 금색, 루비 짙은 남색
+   ───────────────────────────────────────────── */
+
+/* 검정(기본) — 기존 다크 유지 */
+#reader-scroll.theme-dark { background:#15110d; }
+#reader-scroll.theme-dark .reader-content { color:#e3d8c8; }
+#reader-scroll.theme-dark .reader-content .verse-num { color:#b89150; }
+#reader-scroll.theme-dark .reader-content rt { color:#9fb0e8; }
+
+/* 베이지 */
+#reader-scroll.theme-beige { background:#f3ead7; }
+#reader-scroll.theme-beige .reader-content { color:#1c1c1c; }
+#reader-scroll.theme-beige .reader-content .verse-num { color:#9a7b1f; }
+#reader-scroll.theme-beige .reader-content rt { color:#1a2a6c; }
+#reader-scroll.theme-beige .reader-content .verse-num.has-anno { border-bottom-color:#9a7b1f; }
+#reader-scroll.theme-beige .anno-box { background:#e7dcc2; border-left-color:#b89150; color:#3a3424; }
+
+/* 하늘색 */
+#reader-scroll.theme-sky { background:#dceaf4; }
+#reader-scroll.theme-sky .reader-content { color:#1a1a1a; }
+#reader-scroll.theme-sky .reader-content .verse-num { color:#9a7b1f; }
+#reader-scroll.theme-sky .reader-content rt { color:#16306e; }
+#reader-scroll.theme-sky .reader-content .verse-num.has-anno { border-bottom-color:#9a7b1f; }
+#reader-scroll.theme-sky .anno-box { background:#cadcec; border-left-color:#6b8bb5; color:#2a3445; }
+
+/* 회색 */
+#reader-scroll.theme-gray { background:#d8d8d8; }
+#reader-scroll.theme-gray .reader-content { color:#1a1a1a; }
+#reader-scroll.theme-gray .reader-content .verse-num { color:#8a6f1c; }
+#reader-scroll.theme-gray .reader-content rt { color:#1a2a6c; }
+#reader-scroll.theme-gray .reader-content .verse-num.has-anno { border-bottom-color:#8a6f1c; }
+#reader-scroll.theme-gray .anno-box { background:#c6c6c6; border-left-color:#8a8a8a; color:#2c2c2c; }
+
+/* 밝은 테마에서 주석 내 강조 색 조정 */
+#reader-scroll.theme-beige .anno-box i,
+#reader-scroll.theme-sky .anno-box i,
+#reader-scroll.theme-gray .anno-box i { color:#1a3a8c; }
+#reader-scroll.theme-beige .anno-box u,
+#reader-scroll.theme-sky .anno-box u,
+#reader-scroll.theme-gray .anno-box u { color:#7a3a8c; }
+#reader-scroll.theme-beige .anno-box b,
+#reader-scroll.theme-sky .anno-box b,
+#reader-scroll.theme-gray .anno-box b { color:#2a2418; }
+#reader-scroll.theme-beige .anno-label,
+#reader-scroll.theme-sky .anno-label,
+#reader-scroll.theme-gray .anno-label { color:#8a6f1c; }

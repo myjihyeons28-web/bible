@@ -61,26 +61,49 @@
   <header class="nav-header">
     <button class="back-btn" id="back-to-chapters">‹ 장</button>
     <h2 class="nav-title" id="reader-title">창세기 1장</h2>
-    <span class="nav-spacer"></span>
+    <button class="settings-btn" id="settings-btn" aria-label="설정">⚙</button>
   </header>
+  <div class="reader-search-bar">
+    <input type="search" id="reader-search-input" placeholder="구절 또는 책 이름 검색" autocomplete="off">
+    <button id="reader-search-clear" class="search-clear" aria-label="지우기">✕</button>
+  </div>
   <div class="reader-scroll" id="reader-scroll">
+    <div id="reader-search-results" class="search-results"></div>
     <div id="reader-content" class="reader-content"></div>
-    <div class="reader-nav">
+    <div class="reader-nav" id="reader-nav-buttons">
       <button id="prev-chapter" class="chapter-nav-btn">‹ 이전 장</button>
       <button id="next-chapter" class="chapter-nav-btn">다음 장 ›</button>
     </div>
   </div>
 </div>
 
-<!-- 설정 버튼 (글자 크기) -->
-<button id="font-btn" class="font-btn" aria-label="글자 크기">가</button>
-<div id="font-panel" class="font-panel">
-  <button data-size="small">작게</button>
-  <button data-size="medium">보통</button>
-  <button data-size="large">크게</button>
-  <button data-size="xlarge">아주 크게</button>
-  <label class="ruby-toggle"><input type="checkbox" id="ruby-toggle" checked> 한자음 표시</label>
+<!-- 설정 패널 (상단 오른쪽에서 펼쳐짐) -->
+<div id="settings-panel" class="settings-panel">
+  <div class="settings-section">
+    <div class="settings-label">글자 크기</div>
+    <div class="settings-row">
+      <button data-size="small">작게</button>
+      <button data-size="medium">보통</button>
+      <button data-size="large">크게</button>
+      <button data-size="xlarge">아주 크게</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">배경 색</div>
+    <div class="settings-row">
+      <button data-theme="dark">검정</button>
+      <button data-theme="beige">베이지</button>
+      <button data-theme="sky">하늘색</button>
+      <button data-theme="gray">회색</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <label class="ruby-toggle"><input type="checkbox" id="ruby-toggle" checked> 한자음 표시</label>
+  </div>
 </div>
+
+<!-- 맨 위로 버튼 -->
+<button id="top-btn" class="top-btn" aria-label="맨 위로">↑</button>
 
 <script src="./bible-data.js"></script>
 <script src="./manna-ot.js"></script>

@@ -77,6 +77,15 @@
     content.innerHTML = c.html;
     applyFontSize();
     applyRuby();
+    applyTheme();
+    // 본문 열 때 검색 결과 비우고 본문 보이게
+    const rsr = document.getElementById('reader-search-results');
+    if(rsr) rsr.innerHTML='';
+    content.style.display='';
+    document.getElementById('reader-nav-buttons').style.display='';
+    const rsi = document.getElementById('reader-search-input');
+    if(rsi){ rsi.value=''; }
+    document.getElementById('reader-search-clear').classList.remove('show');
     // 주석 연결: 이 장의 주석 데이터
     const bookAnno = MANNA_DATA[String(b.booknum)] || {};
     const chAnno = bookAnno[String(c.num)] || {};
@@ -147,20 +156,23 @@
     if(curChapterIdx < books[curBookIdx].chapters.length-1) openChapter(curChapterIdx+1);
   });
 
-  // ── 글자 크기 ──
-  const fontBtn = document.getElementById('font-btn');
-  const fontPanel = document.getElementById('font-panel');
+  // ── 설정 패널 (글자 크기 / 배경색 / 한자음) ──
+  const settingsBtn = document.getElementById('settings-btn');
+  const settingsPanel = document.getElementById('settings-panel');
   let curSize = localStorage.getItem('bible-fontsize') || 'medium';
   let rubyOn = localStorage.getItem('bible-ruby') !== 'off';
+  let curTheme = localStorage.getItem('bible-theme') || 'dark';
 
-  fontBtn.addEventListener('click', (e)=>{
+  settingsBtn.addEventListener('click', (e)=>{
     e.stopPropagation();
-    fontPanel.classList.toggle('show');
+    settingsPanel.classList.toggle('show');
   });
   document.addEventListener('click', (e)=>{
-    if(!fontPanel.contains(e.target) && e.target!==fontBtn) fontPanel.classList.remove('show');
+    if(!settingsPanel.contains(e.target) && e.target!==settingsBtn) settingsPanel.classList.remove('show');
   });
-  fontPanel.querySelectorAll('button[data-size]').forEach(btn=>{
+
+  // 글자 크기
+  settingsPanel.querySelectorAll('button[data-size]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       curSize = btn.dataset.size;
       localStorage.setItem('bible-fontsize', curSize);
@@ -173,12 +185,32 @@
     content.className = 'reader-content size-'+curSize + (rubyOn?'':' hide-ruby');
   }
   function updateSizeButtons(){
-    fontPanel.querySelectorAll('button[data-size]').forEach(btn=>{
+    settingsPanel.querySelectorAll('button[data-size]').forEach(btn=>{
       btn.classList.toggle('active', btn.dataset.size===curSize);
     });
   }
 
-  // ── 루비(한자음) 토글 ──
+  // 배경 테마
+  settingsPanel.querySelectorAll('button[data-theme]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      curTheme = btn.dataset.theme;
+      localStorage.setItem('bible-theme', curTheme);
+      applyTheme();
+      updateThemeButtons();
+    });
+  });
+  function applyTheme(){
+    const scroll = document.getElementById('reader-scroll');
+    scroll.classList.remove('theme-dark','theme-beige','theme-sky','theme-gray');
+    scroll.classList.add('theme-'+curTheme);
+  }
+  function updateThemeButtons(){
+    settingsPanel.querySelectorAll('button[data-theme]').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.theme===curTheme);
+    });
+  }
+
+  // 한자음(루비) 토글
   const rubyToggle = document.getElementById('ruby-toggle');
   rubyToggle.checked = rubyOn;
   rubyToggle.addEventListener('change', ()=>{
@@ -191,7 +223,51 @@
     content.classList.toggle('hide-ruby', !rubyOn);
   }
 
-  // ── 검색 ──
+  // 맨 위로 버튼
+  document.getElementById('top-btn').addEventListener('click', ()=>{
+    document.getElementById('reader-scroll').scrollTop = 0;
+  });
+
+  // ── 본문 화면 검색 ──
+  const rSearchInput = document.getElementById('reader-search-input');
+  const rSearchClear = document.getElementById('reader-search-clear');
+  const rSearchResults = document.getElementById('reader-search-results');
+  const readerContent = document.getElementById('reader-content');
+  const readerNavBtns = document.getElementById('reader-nav-buttons');
+  let rSearchTimer = null;
+
+  rSearchInput.addEventListener('input', ()=>{
+    const q = rSearchInput.value.trim();
+    rSearchClear.classList.toggle('show', q.length>0);
+    clearTimeout(rSearchTimer);
+    if(q.length===0){
+      rSearchResults.innerHTML='';
+      readerContent.style.display='';
+      readerNavBtns.style.display='';
+      return;
+    }
+    rSearchTimer = setTimeout(()=>doReaderSearch(q), 250);
+  });
+  rSearchClear.addEventListener('click', ()=>{
+    rSearchInput.value='';
+    rSearchClear.classList.remove('show');
+    rSearchResults.innerHTML='';
+    readerContent.style.display='';
+    readerNavBtns.style.display='';
+  });
+  function doReaderSearch(q){
+    readerContent.style.display='none';
+    readerNavBtns.style.display='none';
+    rSearchResults.innerHTML = buildSearchHtml(q);
+    bindSearchItems(rSearchResults, ()=>{
+      // 검색 결과 클릭 시 검색 상태 초기화
+      rSearchInput.value=''; rSearchClear.classList.remove('show');
+      rSearchResults.innerHTML='';
+      readerContent.style.display=''; readerNavBtns.style.display='';
+    });
+  }
+
+  // ── 글자 크기 ──
   const searchInput = document.getElementById('search-input');
   const searchClear = document.getElementById('search-clear');
   const searchResults = document.getElementById('search-results');
@@ -227,12 +303,16 @@
 
   function doSearch(q){
     booksList.style.display='none';
-    // 책 이름 검색 먼저
+    searchResults.innerHTML = buildSearchHtml(q);
+    bindSearchItems(searchResults, null);
+  }
+
+  // 공용: 검색 결과 HTML 생성
+  function buildSearchHtml(q){
     const nameMatches = [];
     books.forEach((b,idx)=>{
       if(b.name.includes(q) || b.abbr===q){ nameMatches.push(idx); }
     });
-    // 본문 검색 (최대 200건)
     const results = [];
     const MAX = 200;
     outer:
@@ -242,7 +322,6 @@
         const plain = stripTags(b.chapters[ci].html);
         let pos = plain.indexOf(q);
         if(pos>=0){
-          // 절 번호 단위로 잘라 표시
           const start = Math.max(0,pos-18);
           const end = Math.min(plain.length,pos+q.length+40);
           let snippet = plain.slice(start,end);
@@ -269,10 +348,15 @@
     if(!html){
       html = `<div class="search-empty">"${escapeHtml(q)}"에 대한 결과가 없습니다.</div>`;
     }
-    searchResults.innerHTML = html;
-    searchResults.querySelectorAll('.search-result-item').forEach(item=>{
+    return html;
+  }
+
+  // 공용: 검색 결과 항목에 클릭 이벤트 연결
+  function bindSearchItems(container, afterClick){
+    container.querySelectorAll('.search-result-item').forEach(item=>{
       item.addEventListener('click', ()=>{
         const bi = parseInt(item.dataset.book);
+        if(afterClick) afterClick();
         if(item.dataset.type==='book'){
           openBook(bi);
         } else {
@@ -288,6 +372,7 @@
   // ── 초기화 ──
   renderBooks();
   updateSizeButtons();
+  updateThemeButtons();
 
   // 서비스워커
   if('serviceWorker' in navigator){
