@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1410">
+<title>관주 성경전서 — 간이 국한문</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<!-- 화면 1: 권 목록 (홈) -->
+<div id="screen-books" class="screen active">
+  <header class="app-header">
+    <div class="cover-wrap">
+      <img src="./cover.jpeg" alt="관주 성경전서" class="cover-img">
+    </div>
+    <h1 class="app-title">貫珠 聖經全書</h1>
+    <p class="app-subtitle">간이 국한문 · 대한성서공회</p>
+  </header>
+
+  <div class="search-bar">
+    <input type="search" id="search-input" placeholder="구절 또는 책 이름 검색" autocomplete="off">
+    <button id="search-clear" class="search-clear" aria-label="지우기">✕</button>
+  </div>
+
+  <div class="list-scroll" id="books-scroll">
+    <div id="books-list"></div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<!-- 화면 2: 장 목차 -->
+<div id="screen-chapters" class="screen">
+  <header class="nav-header">
+    <button class="back-btn" id="back-to-books">‹ 목록</button>
+    <h2 class="nav-title" id="chapters-title">창세기</h2>
+    <span class="nav-spacer"></span>
+  </header>
+  <div class="list-scroll">
+    <div id="chapters-grid" class="chapters-grid"></div>
+  </div>
+</div>
+
+<!-- 화면 3: 본문 -->
+<div id="screen-reader" class="screen">
+  <header class="nav-header">
+    <button class="back-btn" id="back-to-chapters">‹ 장</button>
+    <h2 class="nav-title" id="reader-title">창세기 1장</h2>
+    <span class="nav-spacer"></span>
+  </header>
+  <div class="reader-scroll" id="reader-scroll">
+    <div id="reader-content" class="reader-content"></div>
+    <div class="reader-nav">
+      <button id="prev-chapter" class="chapter-nav-btn">‹ 이전 장</button>
+      <button id="next-chapter" class="chapter-nav-btn">다음 장 ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- 설정 버튼 (글자 크기) -->
+<button id="font-btn" class="font-btn" aria-label="글자 크기">가</button>
+<div id="font-panel" class="font-panel">
+  <button data-size="small">작게</button>
+  <button data-size="medium">보통</button>
+  <button data-size="large">크게</button>
+  <button data-size="xlarge">아주 크게</button>
+  <label class="ruby-toggle"><input type="checkbox" id="ruby-toggle" checked> 한자음 표시</label>
+</div>
+
+<script src="./bible-data.js"></script>
+<script src="./manna-ot.js"></script>
+<script src="./manna-nt.js"></script>
+<script>
+  // 구약/신약 주석을 하나로 합침
+  var MANNA_DATA = Object.assign({}, window.MANNA_OT || {}, window.MANNA_NT || {});
+</script>
+<script src="./app.js"></script>
+</body>
+</html>
